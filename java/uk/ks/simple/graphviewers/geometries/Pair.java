@@ -38,7 +38,7 @@ public class Pair {
 		return point;
 	}
 
-	public int getColor() {
+    public int getColor() {
 		return color;
 	}
 
