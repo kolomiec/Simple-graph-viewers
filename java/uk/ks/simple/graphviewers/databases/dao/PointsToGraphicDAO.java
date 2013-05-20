@@ -2,6 +2,7 @@ package uk.ks.simple.graphviewers.databases.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -32,5 +33,12 @@ public class PointsToGraphicDAO {
         values.put(GraphSQLiteHelper.GRAPHIC_ID, graphicId);
         values.put(GraphSQLiteHelper.POINT_ID, pointId);
         database.insert(GraphSQLiteHelper.TABLE_POINTS_TO_GRAPHIC, null, values); //
+    }
+
+    public Cursor getAllGraphWithPoint(){
+        Cursor result;
+        String query = "";
+        result = database.rawQuery(query, null);
+        return result;
     }
 }
