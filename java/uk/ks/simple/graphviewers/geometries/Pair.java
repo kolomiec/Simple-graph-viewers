@@ -31,10 +31,20 @@ public class Pair {
 	}
 
 	public void draw(Canvas canvas) {
+        Point point = recalculateCoordinate();
 		canvas.drawPoint(point.getX(), point.getY(), paint);
 	}
 
-	public Point getPoint() {
+    private Point recalculateCoordinate() {
+        Point result;
+        CoordinateSystem coordinateSystem = new CoordinateSystem();
+        int x = coordinateSystem.getOriginPoint().getX() + (this.point.getX() * coordinateSystem.getLabelStep());
+        int y = coordinateSystem.getOriginPoint().getY() - (this.point.getX() * coordinateSystem.getLabelStep());
+        result = new Point(x, y);
+        return result;
+    }
+
+    public Point getPoint() {
 		return point;
 	}
 

@@ -15,14 +15,16 @@ public class CoordinateSystem {
 	private Point endPointXAxis = new Point(SystemInformation.DISPLAY_WIDTH-10, SystemInformation.DISPLAY_HEIGHT-200);
 	private Point startPointYAxis = new Point(50,SystemInformation.DISPLAY_HEIGHT - 200);
 	private Point endPointYAxis = new Point(50,10);
+    private final Point originPoint = new Point(startPointXAxis);
 	private final int labelStep = 40;
 	private final int labelHeight = 15;
 	private final int lineWidth = 5;
 	private final int labelWidth = 2;
     private final int textWidth = 30;
-	private Paint paint = new Paint();
+	private Paint paint;
 
 	public CoordinateSystem() {
+        paint = new Paint();
 		paint.setColor(Color.BLACK);
 	}
 
@@ -68,4 +70,12 @@ public class CoordinateSystem {
 			cursorPos.setX(cursorPos.getX() + labelStep);
 		}
 	}
+
+    public Point getOriginPoint() {
+        return this.originPoint;
+    }
+
+    public int getLabelStep() {
+        return this.labelStep;
+    }
 }
