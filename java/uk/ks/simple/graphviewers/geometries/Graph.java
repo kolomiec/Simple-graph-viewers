@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.ks.simple.graphviewers.beans.Point;
+import uk.ks.simple.graphviewers.utils.RecalculateSystem;
+
 /**
  * Created by root on 5/17/13.
  */
@@ -15,10 +18,16 @@ public class Graph {
 	private List<Pair> graphicPairs = new LinkedList<Pair>();
 	private int color = Color.BLACK;
 	private Pair firstPair = null;
-	private int lineWidth = 3;
+	private int lineWidth = 5;
 	private Paint paint = new Paint();
 
-	public void draw(Canvas canvas) {
+    public Graph(int color, List<Pair> graphicPairs) {
+        this.color = color;
+        this.graphicPairs = graphicPairs;
+        paint.setColor(color);
+    }
+
+    public void draw(Canvas canvas) {
 		for(Pair pair : graphicPairs ) {
 			if(firstPair == null) {
 				firstPair = pair;
@@ -28,17 +37,18 @@ public class Graph {
 				drawLine(firstPair, pair, canvas);
 				firstPair = pair;
 			}
-
 		}
 	}
 
 	private void drawLine(Pair firstPair, Pair secondPair, Canvas canvas) {
 		paint.setStrokeWidth(lineWidth);
+        Point fp = RecalculateSystem.recalculateCoordinate(firstPair.getPoint());
+        Point sp = RecalculateSystem.recalculateCoordinate(secondPair.getPoint());
 		canvas.drawLine(
-				firstPair.getPoint().getX(),
-				firstPair.getPoint().getY(),
-				secondPair.getPoint().getX(),
-				secondPair.getPoint().getY(),
+				fp.getX(),
+				fp.getY(),
+				sp.getX(),
+				sp.getY(),
 				paint);
 	}
 }

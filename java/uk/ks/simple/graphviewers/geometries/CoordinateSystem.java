@@ -72,7 +72,7 @@ public class CoordinateSystem {
 	}
 
     public Point getOriginPoint() {
-        return this.originPoint;
+        return originPoint;
     }
 
     public int getLabelStep() {

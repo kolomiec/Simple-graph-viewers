@@ -13,7 +13,7 @@ public class RandomObjectGenerator {
 		return new Point(getRandomInt(maxX), getRandomInt(maxY));
 	}
 
-	private static int getRandomInt(int r) {
+	public static int getRandomInt(int r) {
 		return new Random().nextInt(r);
 	}
 }
