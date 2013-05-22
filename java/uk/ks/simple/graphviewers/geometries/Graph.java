@@ -51,4 +51,12 @@ public class Graph {
 				sp.getY(),
 				paint);
 	}
+
+    public int getColor() {
+        return color;
+    }
+
+    public List<Pair> getGraphicPairs() {
+        return graphicPairs;
+    }
 }

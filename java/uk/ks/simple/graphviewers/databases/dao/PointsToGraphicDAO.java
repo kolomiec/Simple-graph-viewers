@@ -37,7 +37,12 @@ public class PointsToGraphicDAO {
 
     public Cursor getAllGraphWithPoint(){
         Cursor result;
-        String query = "";
+        String query =
+                    "select graphics.id as graphicId, graphics.color as color, points.xCoordinate as x, points.yCoordinate as y "
+                    + "from point_to_graphics "
+                    + "inner join graphics on point_to_graphics.graphicId = graphics.id "
+                    + "inner join points on point_to_graphics.pointId = points.id "
+                    + "order by graphics.id";
         result = database.rawQuery(query, null);
         return result;
     }

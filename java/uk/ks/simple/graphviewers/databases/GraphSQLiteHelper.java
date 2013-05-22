@@ -10,6 +10,7 @@ import android.util.Log;
  */
 public class GraphSQLiteHelper extends SQLiteOpenHelper {
 
+    private final Context context;
 	public static final String TABLE_GRAPHICS = "graphics";
 	public static final String TABLE_POINTS_TO_GRAPHIC = "point_to_graphics";
 	public static final String TABLE_POINTS = "points";
@@ -32,8 +33,9 @@ public class GraphSQLiteHelper extends SQLiteOpenHelper {
 
 	private static final String CREATE_POINTS_TO_GRAPHIC_TABLE = "create table "
 			+ TABLE_POINTS_TO_GRAPHIC + "("
-			+ GRAPHIC_ID + " integer primary key, "
-			+ POINT_ID + " integer primary key);";
+			+ GRAPHIC_ID + " integer, "
+			+ POINT_ID + " integer, "
+            + "primary key (" + GRAPHIC_ID +", "+ POINT_ID+"));";
 
 	private static final String CREATE_POINTS_TABLE = "create table "
 			+ TABLE_POINTS + "("
@@ -41,8 +43,9 @@ public class GraphSQLiteHelper extends SQLiteOpenHelper {
 			+ X_COORDINATE + " integer not null, "
 			+ Y_COORDINATE + " integer not null);";
 
-	public GraphSQLiteHelper(Context context) {
+    public GraphSQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
 	}
 
 	@Override
@@ -62,4 +65,12 @@ public class GraphSQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_POINTS);
 		onCreate(db);
 	}
+
+    public void clearDB() {
+//        context.deleteDatabase(DATABASE_NAME);
+        SQLiteDatabase database = this.getWritableDatabase();
+        database.delete(TABLE_GRAPHICS, null, null);
+        database.delete(TABLE_POINTS, null, null);
+        database.delete(TABLE_POINTS_TO_GRAPHIC, null, null);
+    }
 }

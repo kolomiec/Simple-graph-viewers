@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import uk.ks.simple.graphviewers.R;
@@ -15,12 +16,14 @@ public class BaseActivity extends Activity {
 
 	private View baseHolder;
 	private DisplayMetrics displayMetrics;
+    private BaseHolder view;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		getSystemInformation();
-		setContentView(new BaseHolder(getBaseContext()));
+        view = new BaseHolder(getBaseContext());
+		setContentView(view);
     }
 
 	private void getSystemInformation() {
@@ -32,9 +35,26 @@ public class BaseActivity extends Activity {
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.base, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.generate:
+                view.reDraw();
+                return true;
+            case R.id.save:
+                view.saveToDB();
+                return true;
+            case R.id.clear:
+                view.clear();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     
 }

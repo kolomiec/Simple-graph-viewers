@@ -1,5 +1,6 @@
 package uk.ks.simple.graphviewers.utils;
 
+import android.database.Cursor;
 import android.graphics.Color;
 
 import java.util.ArrayList;
@@ -48,6 +49,34 @@ public class SimpleGraphGenerator {
             }
         }
         Collections.sort(result);
+        return result;
+    }
+
+    public List<Graph> generateFromCursor(Cursor cursor) {
+        List<Graph> result = new ArrayList<Graph>();
+        List<Pair> graphPairs = new ArrayList<Pair>();
+        if (cursor.moveToFirst()){
+            int previousGraphId = cursor.getInt(cursor.getColumnIndex("graphicId"));
+            int previousColor = cursor.getInt(cursor.getColumnIndex("color"));
+            do{
+                int graphicId = cursor.getInt(cursor.getColumnIndex("graphicId"));
+                int color = cursor.getInt(cursor.getColumnIndex("color"));
+                int x = cursor.getInt(cursor.getColumnIndex("x"));
+                int y = cursor.getInt(cursor.getColumnIndex("y"));
+                if(previousGraphId == graphicId) {
+                    graphPairs.add(new Pair(color,new Point(x, y)));
+                } else {
+                    result.add(new Graph(previousColor, graphPairs));
+                    graphPairs = new ArrayList<Pair>();
+                    graphPairs.add(new Pair(color,new Point(x, y)));
+                    previousGraphId = graphicId;
+                    previousColor = color;
+                }
+
+            }while(cursor.moveToNext());
+            result.add(new Graph(previousColor, graphPairs));
+        }
+        cursor.close();
         return result;
     }
 }
