@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,11 +17,12 @@ import uk.ks.simple.graphviewers.utils.SystemInformation;
  */
 public class Graph {
 
-	private List<Pair> graphicPairs = new LinkedList<Pair>();
+	private List<Pair> graphicPairs = new ArrayList<Pair>();
 	private int color = Color.BLACK;
 	private Pair firstPair = null;
 	private int lineWidth = 5;
 	private Paint paint = new Paint();
+    private Graph connectedGraph;
 
     public Graph(int color, List<Pair> graphicPairs) {
         this.color = color;
@@ -75,16 +77,29 @@ public class Graph {
     public boolean move(Point point) {
         Point movePoint = RecalculateSystem.calculateShiftInArtificialCoordinateSystem(point);
         boolean shift = (Math.abs(movePoint.getX()) > 0 || Math.abs(movePoint.getY()) > 0) && isOnCoordinateSystem(movePoint);
-        if(shift){
-            for(Pair pair : graphicPairs ) {
-                Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
-                pair.setPoint(newPoint);
-            }
-        }
+//        if(shift){
+            shiftGraph(movePoint);
+//        }
         return shift;
     }
 
-    private boolean isOnCoordinateSystem(Point movePoint) {
+    private void shiftGraph(Point movePoint) {
+        for(Pair pair : graphicPairs ) {
+            Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
+            pair.setPoint(newPoint);
+        }
+//        for(int i = 0; i < connectedGraph.size(); i++) {
+//            for(Pair pair : connectedGraph.get(i).getGraphicPairs() ) {
+//                Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
+////                pair.setPoint(newPoint);
+//                connectedGraph.get(i).move(newPoint);
+//            }
+//        }
+    }
+
+    // ToDo try to optimize
+    public boolean isOnCoordinateSystem(Point point) {
+        Point movePoint = RecalculateSystem.calculateShiftInArtificialCoordinateSystem(point);
         boolean result = true;
         for(Pair pair : graphicPairs ) {
             Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
@@ -96,7 +111,6 @@ public class Graph {
             }
         }
         return result;
-
     }
 
     private boolean isBetween(Point touchPoint, Point firstPoint, Point nextPoint) {
@@ -108,5 +122,34 @@ public class Graph {
                                 &&
                             touchPoint.getY() <= (firstPoint.getY() > nextPoint.getY() ? firstPoint.getY() : nextPoint.getY());
         return xIsBetween && yIsBetween;
+    }
+
+    public void connectGraph(Graph graph) {
+        if (connectedGraph == null) {
+            this.connectedGraph = graph;
+        }
+    }
+
+    public boolean isConnected() {
+        return connectedGraph != null;
+    }
+
+    public Graph getConnectedGraph() {
+        return connectedGraph;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Graph that = (Graph) obj;
+
+        if (this.color != that.color) return false;
+        //if
+//        if (this.getPoint().getX() != that.getPoint().getX()) return false;
+//        if (this.getPoint().getY() != that.getPoint().getY()) return false;
+//        if (this.color != that.color) return false;
+        return true;
     }
 }

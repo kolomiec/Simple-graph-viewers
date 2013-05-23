@@ -34,4 +34,16 @@ public class Point {
 		this.y = y;
 	}
 
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Point that = (Point) obj;
+
+        if (this.getX() != that.getX()) return false;
+        if (this.getY() != that.getY()) return false;
+        return true;
+    }
+
 }

@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import uk.ks.simple.graphviewers.beans.Point;
 import uk.ks.simple.graphviewers.databases.GraphSQLiteHelper;
@@ -34,6 +36,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
     private PointsToGraphicDAO pointsToGraphicDAO;
     private Graph movingGraph;
     private Point startDrawPoint;
+    private List<Graph> fatGraph = new Vector<Graph>();
 
     public BaseHolder(Context context) {
 		super(context);
@@ -77,7 +80,6 @@ public class BaseHolder extends View  implements View.OnTouchListener {
 
     @Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
-//		invalidate();
         int dx, dy, endX, endY;
         switch(motionEvent.getAction())
         {
@@ -92,24 +94,14 @@ public class BaseHolder extends View  implements View.OnTouchListener {
                 dx = endX - startDrawPoint.getX();
                 dy = endY - startDrawPoint.getY();
                 if(movingGraph != null) {
-                    if (movingGraph.move(new Point(dx, dy))){
-                        startDrawPoint = new Point(endX, endY);
-                    };
+//                    move(new Point(dx, dy));
+//                    startDrawPoint = new Point(endX, endY);
+                    Point movePoint = new Point(dx, dy);
+                    move(movePoint);
+                    startDrawPoint = new Point(endX, endY);
                 }
-                invalidate();
                 break;
-
             case MotionEvent.ACTION_UP:
-//                Log.w(this.getClass().getName(),"In MOTION UP");
-//                // All of this should be fine.
-//                endX = Math.round(motionEvent.getX());
-//                endY = Math.round(motionEvent.getY());
-//                dx = endX - startDrawPoint.getX();
-//                dy = endY - startDrawPoint.getY();
-//                if(movingGraph != null) {
-//                    movingGraph.move(new Point(dx, dy));
-//                }
-//                invalidate();
                 break;
 
             default:
@@ -117,6 +109,78 @@ public class BaseHolder extends View  implements View.OnTouchListener {
         }
         return true;
 	}
+
+    private void move(Point movePoint) {
+        if (movingGraph.isOnCoordinateSystem(movePoint)){
+            if (movingGraph.isConnected()) {
+                Graph graph = movingGraph.getConnectedGraph();
+                if (graph.isOnCoordinateSystem(movePoint)) {
+                    movingGraph.move(movePoint);
+                    graph.move(movePoint);
+                    invalidate();
+                };
+            } else {
+                movingGraph.move(movePoint);
+                invalidate();
+                findGraphToConnect(movingGraph);
+            }
+        }
+        ;
+    }
+
+    private void findGraphToConnect(Graph movingGraph) {
+        if (!movingGraph.isConnected()) {
+            for(int i = 0; i < graphList.size(); i++) {
+                Graph nextGraph = graphList.get(i);
+                if(findSimilarPair(nextGraph, movingGraph) && !nextGraph.isConnected()) {
+                    movingGraph.connectGraph(nextGraph);
+                    nextGraph.connectGraph(movingGraph);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void checkToConnectGraphic(Graph movingGraph) {
+        if (fatGraph.isEmpty()) {
+            fatGraph.add(movingGraph);
+        }
+        if (fatGraph.contains(movingGraph)) {
+            for(Graph graph: graphList) {
+                if(!fatGraph.contains(graph) && findSimilarPair(graph, movingGraph)) {
+                    fatGraph.add(graph);
+                }
+            }
+        } //else {
+//            for(int i = 0; i < fatGraph.size(); i++) {
+//                if(!fatGraph.contains(movingGraph) && findSimilarPair(fatGraph.get(i), movingGraph)) {
+//                    fatGraph.add(movingGraph);
+//                }
+//            }
+//        }
+
+//        movingGraph.clearGraphToConnectList();
+//        for(Graph graph: graphList) {
+//            if(!graph.equals(movingGraph) && findSimilarPair(graph, movingGraph)) {
+//               graph.addGraphToConnect(movingGraph);
+//               movingGraph.addGraphToConnect(graph);
+//            }
+//        }
+    }
+
+    private boolean findSimilarPair(Graph graph, Graph movingGraph) {
+        boolean result = false;
+        if (movingGraph.equals(graph)) return false;
+        for(Pair currentPair: graph.getGraphicPairs()) {
+            for(Pair pair: movingGraph.getGraphicPairs()) {
+                if (currentPair.getPoint().equals(pair.getPoint()) ) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
 
     private Graph findMovingGraph(Point touchPoint) {
         for(Graph graph: graphList) {
