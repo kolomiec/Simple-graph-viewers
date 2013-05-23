@@ -137,7 +137,9 @@ public class BaseHolder extends View  implements View.OnTouchListener, View.OnLo
                 Graph nextGraph = graphList.get(i);
                 if(findSimilarPair(nextGraph, movingGraph) && !nextGraph.isConnected()) {
                     movingGraph.connectGraph(nextGraph);
+                    movingGraph.setMergeStyle();
                     nextGraph.connectGraph(movingGraph);
+                    nextGraph.setMergeStyle();
                     return;
                 }
             }
@@ -227,8 +229,11 @@ public class BaseHolder extends View  implements View.OnTouchListener, View.OnLo
             if (isContainPoint(graphList.get(i), startDrawPoint)) {
                 if (graphList.get(i).getConnectedGraph() != null) {
                     graphList.get(i).getConnectedGraph().clearConnectedGraph();
+                    graphList.get(i).getConnectedGraph().setSingleStyle();
                 }
                 graphList.get(i).clearConnectedGraph();
+                graphList.get(i).setSingleStyle();
+                invalidate();
                 return false;
             }
         }

@@ -20,14 +20,16 @@ public class Graph {
 	private List<Pair> graphicPairs = new ArrayList<Pair>();
 	private int color = Color.BLACK;
 	private Pair firstPair = null;
-	private int lineWidth = 5;
+	private int lineWidth = 4;
 	private Paint paint = new Paint();
     private Graph connectedGraph;
+    private int mergeStyleLineWidth = 8;
 
     public Graph(int color, List<Pair> graphicPairs) {
         this.color = color;
         this.graphicPairs = graphicPairs;
         paint.setColor(color);
+        paint.setStrokeWidth(lineWidth);
     }
 
     public void draw(Canvas canvas) {
@@ -41,7 +43,6 @@ public class Graph {
 	}
 
 	private void drawLine(Pair firstPair, Pair secondPair, Canvas canvas) {
-		paint.setStrokeWidth(lineWidth);
         Point fp = RecalculateSystem.recalculateCoordinateFromArtificialToOriginal(firstPair.getPoint());
         Point sp = RecalculateSystem.recalculateCoordinateFromArtificialToOriginal(secondPair.getPoint());
 		canvas.drawLine(
@@ -88,13 +89,6 @@ public class Graph {
             Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
             pair.setPoint(newPoint);
         }
-//        for(int i = 0; i < connectedGraph.size(); i++) {
-//            for(Pair pair : connectedGraph.get(i).getGraphicPairs() ) {
-//                Point newPoint = new Point(pair.getPoint().getX() + movePoint.getX(), pair.getPoint().getY() - movePoint.getY());
-////                pair.setPoint(newPoint);
-//                connectedGraph.get(i).move(newPoint);
-//            }
-//        }
     }
 
     // ToDo try to optimize
@@ -140,6 +134,14 @@ public class Graph {
 
     public void clearConnectedGraph() {
         connectedGraph = null;
+    }
+
+    public void setMergeStyle() {
+        paint.setStrokeWidth(mergeStyleLineWidth);
+    }
+
+    public void setSingleStyle() {
+        paint.setStrokeWidth(lineWidth);
     }
 
     @Override
