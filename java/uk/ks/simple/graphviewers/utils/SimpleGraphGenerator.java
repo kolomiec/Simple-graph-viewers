@@ -22,7 +22,7 @@ public class SimpleGraphGenerator {
 
     public List<Graph> generate() {
         List<Graph> result = new ArrayList<Graph>();
-        int graphicCount =  3/*RandomObjectGenerator.getRandomInt(9)+2*/;
+        int graphicCount =  /*RandomObjectGenerator.getRandomInt(9)+*/2;
         int [] graphColors = {Color.BLUE, Color.RED,Color.CYAN,Color.GRAY,
                     Color.DKGRAY, Color.GREEN, Color.MAGENTA, Color.LTGRAY, Color.YELLOW, Color.BLUE};
         Graph currentGraph;

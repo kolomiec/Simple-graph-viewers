@@ -21,9 +21,10 @@ import uk.ks.simple.graphviewers.databases.dao.PointsToGraphicDAO;
 import uk.ks.simple.graphviewers.geometries.CoordinateSystem;
 import uk.ks.simple.graphviewers.geometries.Graph;
 import uk.ks.simple.graphviewers.geometries.Pair;
+import uk.ks.simple.graphviewers.utils.RecalculateSystem;
 import uk.ks.simple.graphviewers.utils.SimpleGraphGenerator;
 
-public class BaseHolder extends View  implements View.OnTouchListener {
+public class BaseHolder extends View  implements View.OnTouchListener, View.OnLongClickListener {
 
 	private Paint paint;
 	private CoordinateSystem coordinateSystem;
@@ -41,6 +42,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
     public BaseHolder(Context context) {
 		super(context);
 		this.setOnTouchListener(this);
+        this.setOnLongClickListener(this);
         paint = new Paint();
 		coordinateSystem = new CoordinateSystem();
         graphicsDAO = new GraphicsDAO(context);
@@ -81,6 +83,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
     @Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
         int dx, dy, endX, endY;
+        int isTouch = 10;
         switch(motionEvent.getAction())
         {
             case MotionEvent.ACTION_DOWN:
@@ -94,11 +97,11 @@ public class BaseHolder extends View  implements View.OnTouchListener {
                 dx = endX - startDrawPoint.getX();
                 dy = endY - startDrawPoint.getY();
                 if(movingGraph != null) {
-//                    move(new Point(dx, dy));
-//                    startDrawPoint = new Point(endX, endY);
                     Point movePoint = new Point(dx, dy);
-                    move(movePoint);
-                    startDrawPoint = new Point(endX, endY);
+                    if(Math.abs(dx) > isTouch && Math.abs(dy) > isTouch) {
+                        move(movePoint);
+                        startDrawPoint = new Point(endX, endY);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -107,7 +110,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
             default:
                 break;
         }
-        return true;
+        return false;
 	}
 
     private void move(Point movePoint) {
@@ -151,21 +154,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
                     fatGraph.add(graph);
                 }
             }
-        } //else {
-//            for(int i = 0; i < fatGraph.size(); i++) {
-//                if(!fatGraph.contains(movingGraph) && findSimilarPair(fatGraph.get(i), movingGraph)) {
-//                    fatGraph.add(movingGraph);
-//                }
-//            }
-//        }
-
-//        movingGraph.clearGraphToConnectList();
-//        for(Graph graph: graphList) {
-//            if(!graph.equals(movingGraph) && findSimilarPair(graph, movingGraph)) {
-//               graph.addGraphToConnect(movingGraph);
-//               movingGraph.addGraphToConnect(graph);
-//            }
-//        }
+        }
     }
 
     private boolean findSimilarPair(Graph graph, Graph movingGraph) {
@@ -230,5 +219,29 @@ public class BaseHolder extends View  implements View.OnTouchListener {
 
     private List<Graph> fillGraphicListRandom() {
         return simpleGraphGenerator.generate();
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        for(int i = 0; i < graphList.size(); i++) {
+            if (isContainPoint(graphList.get(i), startDrawPoint)) {
+                if (graphList.get(i).getConnectedGraph() != null) {
+                    graphList.get(i).getConnectedGraph().clearConnectedGraph();
+                }
+                graphList.get(i).clearConnectedGraph();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean isContainPoint(Graph graph, Point p) {
+        Point point = RecalculateSystem.recalculateCoordinateFromOriginalToArtificial(p);
+        for(int i = 0; i < graph.getGraphicPairs().size(); i++) {
+            if (graph.getGraphicPairs().get(i).getPoint().equals(point)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

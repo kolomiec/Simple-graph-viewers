@@ -138,6 +138,10 @@ public class Graph {
         return connectedGraph;
     }
 
+    public void clearConnectedGraph() {
+        connectedGraph = null;
+    }
+
     @Override
     public boolean equals(Object obj){
         if (obj == null || this.getClass() != obj.getClass()) {
