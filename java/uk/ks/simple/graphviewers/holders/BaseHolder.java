@@ -5,11 +5,13 @@ import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.List;
 
+import uk.ks.simple.graphviewers.beans.Point;
 import uk.ks.simple.graphviewers.databases.GraphSQLiteHelper;
 import uk.ks.simple.graphviewers.databases.dao.GraphicsDAO;
 import uk.ks.simple.graphviewers.databases.dao.PointsDAO;
@@ -30,6 +32,8 @@ public class BaseHolder extends View  implements View.OnTouchListener {
     private GraphicsDAO graphicsDAO;
     private PointsDAO pointsDAO;
     private PointsToGraphicDAO pointsToGraphicDAO;
+    private Graph movingGraph;
+    private Point startDrawPoint;
 
     public BaseHolder(Context context) {
 		super(context);
@@ -74,8 +78,54 @@ public class BaseHolder extends View  implements View.OnTouchListener {
     @Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
 //		invalidate();
-		return true;
+        int dx, dy, endX, endY;
+        switch(motionEvent.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                startDrawPoint = new Point(Math.round(motionEvent.getX()), Math.round(motionEvent.getY()));
+                movingGraph = findMovingGraph(startDrawPoint);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.w(this.getClass().getName(), "In MOTION MOVE");
+                endX = Math.round(motionEvent.getX());
+                endY = Math.round(motionEvent.getY());
+                dx = endX - startDrawPoint.getX();
+                dy = endY - startDrawPoint.getY();
+                if(movingGraph != null) {
+                    if (movingGraph.move(new Point(dx, dy))){
+                        startDrawPoint = new Point(endX, endY);
+                    };
+                }
+                invalidate();
+                break;
+
+            case MotionEvent.ACTION_UP:
+//                Log.w(this.getClass().getName(),"In MOTION UP");
+//                // All of this should be fine.
+//                endX = Math.round(motionEvent.getX());
+//                endY = Math.round(motionEvent.getY());
+//                dx = endX - startDrawPoint.getX();
+//                dy = endY - startDrawPoint.getY();
+//                if(movingGraph != null) {
+//                    movingGraph.move(new Point(dx, dy));
+//                }
+//                invalidate();
+                break;
+
+            default:
+                break;
+        }
+        return true;
 	}
+
+    private Graph findMovingGraph(Point touchPoint) {
+        for(Graph graph: graphList) {
+            if(graph.isContainPoint(touchPoint)){
+                return graph;
+            };
+        }
+        return null;
+    }
 
     public void reDraw() {
         graphList = fillGraphicListRandom();
@@ -87,6 +137,7 @@ public class BaseHolder extends View  implements View.OnTouchListener {
 
     public void clear() {
         this.clear = true;
+        graphSQLiteHelper.clearDB();
         invalidate();
     }
 

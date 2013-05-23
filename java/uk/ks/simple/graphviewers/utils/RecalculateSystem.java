@@ -8,11 +8,29 @@ import uk.ks.simple.graphviewers.geometries.CoordinateSystem;
  */
 public class RecalculateSystem {
 
-    public static Point recalculateCoordinate(Point point) {
+    public static Point recalculateCoordinateFromArtificialToOriginal(Point point) {
         Point result;
         CoordinateSystem coordinateSystem = new CoordinateSystem();
         int x = coordinateSystem.getOriginPoint().getX() + (point.getX() * coordinateSystem.getLabelStep());
         int y = coordinateSystem.getOriginPoint().getY() - (point.getY() * coordinateSystem.getLabelStep());
+        result = new Point(x, y);
+        return result;
+    }
+
+    public static Point recalculateCoordinateFromOriginalToArtificial(Point point) {
+        Point result;
+        CoordinateSystem coordinateSystem = new CoordinateSystem();
+        int x = (point.getX() - coordinateSystem.getOriginPoint().getX()) / coordinateSystem.getLabelStep();
+        int y = (coordinateSystem.getOriginPoint().getY() - point.getY()) / coordinateSystem.getLabelStep();
+        result = new Point(x, y);
+        return result;
+    }
+
+    public static Point calculateShiftInArtificialCoordinateSystem(Point point) {
+        Point result;
+        CoordinateSystem coordinateSystem = new CoordinateSystem();
+        int x = point.getX() / coordinateSystem.getLabelStep();
+        int y = point.getY() / coordinateSystem.getLabelStep();
         result = new Point(x, y);
         return result;
     }

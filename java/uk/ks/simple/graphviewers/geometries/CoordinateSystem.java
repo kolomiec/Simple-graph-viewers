@@ -41,6 +41,7 @@ public class CoordinateSystem {
 
 	private void drawLabelOnYAxis(Canvas canvas) {
 		int labelsCount = (startPointYAxis.getY()) / labelStep;
+        SystemInformation.COUNT_LABEL_BY_Y_AXIS = labelsCount;
         int magicNumber = 7; // :) ToDo Rename
 		Point cursorPos = new Point(startPointYAxis.getX(), startPointXAxis.getY() - labelStep);
 		paint.setStrokeWidth(labelWidth);
@@ -60,6 +61,7 @@ public class CoordinateSystem {
 
 	private void drawLabelOnXAxis(Canvas canvas) {
 		int labelsCount = (SystemInformation.DISPLAY_WIDTH - startPointXAxis.getX()) / labelStep;
+        SystemInformation.COUNT_LABEL_BY_X_AXIS = labelsCount;
         int magicNumber = 7; // :) ToDo Rename
 		Point cursorPos = new Point(startPointXAxis.getX() + labelStep, startPointXAxis.getY());
 		paint.setStrokeWidth(labelWidth);

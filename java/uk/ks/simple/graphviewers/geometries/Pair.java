@@ -4,8 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import java.util.Comparator;
-
 import uk.ks.simple.graphviewers.beans.Point;
 import uk.ks.simple.graphviewers.utils.RecalculateSystem;
 
@@ -27,22 +25,18 @@ public class Pair implements Comparable<Pair> {
 	}
 
 	public void draw(Canvas canvas) {
-        Point point = RecalculateSystem.recalculateCoordinate(this.point);
+        Point point = RecalculateSystem.recalculateCoordinateFromArtificialToOriginal(this.point);
         canvas.drawCircle(point.getX(), point.getY(), diameter, paint);
 	}
-
-//    private Point recalculateCoordinate() {
-//        Point result;
-//        CoordinateSystem coordinateSystem = new CoordinateSystem();
-//        int x = coordinateSystem.getOriginPoint().getX() + (this.point.getX() * coordinateSystem.getLabelStep());
-//        int y = coordinateSystem.getOriginPoint().getY() - (this.point.getY() * coordinateSystem.getLabelStep());
-//        result = new Point(x, y);
-//        return result;
-//    }
 
     public Point getPoint() {
 		return point;
 	}
+
+    public void setPoint(Point point) {
+        this.point.setX(point.getX());
+        this.point.setY(point.getY());
+    }
 
     public int getColor() {
 		return color;
